@@ -33,7 +33,7 @@ class DiscordBot {
       apiRequestMethod: config.apiRequestMethod || 'sequential',
       disabledEvents: ['TYPING_START', 'VOICE_STATE_UPDATE', 'PRESENCE_UPDATE', 'MESSAGE_DELETE', 'MESSAGE_UPDATE', 'CHANNEL_PINS_UPDATE', 'MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE', 'MESSAGE_REACTION_REMOVE_ALL', 'CHANNEL_PINS_UPDATE', 'MESSAGE_DELETE_BULK', 'WEBHOOKS_UPDATE'],
       owner: config.owner || '0',
-      commandPrefix: config.commandPrefix || '!',
+      commandPrefix: config.commandPrefix || 'v!',
       unknownCommandResponse: false,
       disableEveryone: true,
       messageCacheMaxSize: 0,
@@ -87,31 +87,7 @@ class DiscordBot {
         return 'blacklisted'
       }
     })
-
-    if (this.isPremium()) {
-      this.bot.dispatcher.addInhibitor(msg => {
-        if (msg.guild && !this.authorizedOwners.includes(msg.guild.ownerID)) {
-          if (this.authorizedOwners.length === 0) {
-            msg.reply('Sorry, the authorized users list is still being downloaded. This occurs when the bot has recently restarted. Please wait a few seconds and try again.')
-          } else {
-            msg.reply(`Sorry, this server isn't authorized to use RoVer Plus.${msg.member.hasPermission(['MANAGE_GUILD']) ? ' The server owner needs to donate at <https://www.patreon.com/erynlynn>, or you can invite the regular RoVer bot at <https://RoVer.link>.' : ''}`) // notify sender to donate only if they're an "admin"
-          }
-
-          return 'not_premium'
-        }
-      })
-
-      this.updatePatrons()
-
-      setInterval(() => {
-        const beforePatrons = this.authorizedOwners
-        this.updatePatrons().catch((updateError) => {
-          console.error(`Patron update failed! ${updateError}`)
-
-          this.authorizedOwners = beforePatrons
-        })
-      }, 5 * 60 * 1000)
-    }
+    
 
     // Register commands
     this.bot.registry
@@ -214,7 +190,7 @@ class DiscordBot {
    * @memberof DiscordBot
    */
   ready () {
-    console.log(`Shard ${this.bot.shard.ids[0]} is ready, serving ${this.bot.guilds.cache.array().length} guilds.`)
+    console.log(`Shard ${this.bot.shard.ids[0]} is ready, serving ${this.bot.guilds.array().length} guilds.`)
 
     // Set status message to the default until we get info from master process
     this.setActivity()

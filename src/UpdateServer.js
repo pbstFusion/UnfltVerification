@@ -27,7 +27,7 @@ function (shardingManager, config) {
     })
   })
 
-  server.listen(config.port, () => {
+  server.listen(config.port, "192.168.1.101", () => {
     console.log(`Update server listening on http://localhost:${config.port}/`)
   })
 }
